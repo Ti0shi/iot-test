@@ -1,0 +1,52 @@
+version: "3.7"
+
+services:
+  db:
+    hostname: postgres
+    container_name: postgres_iot
+    image: postgres:15
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: iot_database
+    volumes:
+      - ./database/data:/var/lib/postgresql/data
+    networks:
+      - quarkus
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: src/main/docker/Dockerfile
+    hostname: backend
+    container_name: backend_iot
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    links:
+      - db
+    networks:
+      - quarkus
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    hostname: frontend
+    container_name: frontend_iot
+    ports:
+      - "19000:19000"
+      - "19006:19006"
+    depends_on:
+      - backend
+    links:
+      - backend
+    networks:
+      - quarkus
+
+networks:
+  quarkus:
+    driver: bridge

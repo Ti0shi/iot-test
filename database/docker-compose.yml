@@ -1,0 +1,15 @@
+version: "3.7"
+
+services:
+  db:
+    hostname: postgres
+    container_name: iotdb
+    image: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: iot_database
+    volumes:
+      - ./data:/var/lib/postgresql/data
